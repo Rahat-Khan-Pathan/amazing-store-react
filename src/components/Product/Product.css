@@ -1,0 +1,33 @@
+.single-product {
+    display: flex;
+    border-bottom: 2px solid lightgray;
+    padding-bottom: 15px;
+}
+.product-details {
+    margin-left: 20px;
+}
+.product-name {
+    color: blue;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.product-seller {
+    color:seagreen;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+.product-price {
+    font-weight: 700;
+    font-size: 17px;
+}
+.add-button {
+    background-color: goldenrod;
+    width: 200px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid gray;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+}
