@@ -2,6 +2,7 @@
     display: flex;
     border-bottom: 2px solid lightgray;
     padding-bottom: 15px;
+    padding-top: 15px;
 }
 .product-details {
     margin-left: 20px;
@@ -11,6 +12,7 @@
     font-size: 17px;
     font-weight: 600;
     margin-bottom: 20px;
+    margin-top: 0;
 }
 .product-seller {
     color:seagreen;

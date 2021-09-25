@@ -4,21 +4,21 @@ import fakeData from '../../fakeData';
 import './Shop.css';
 import Product from '../Product/Product';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import Cart from '../Cart/Cart';
+import {addToDB,getLocalValue} from '../../utilities/addToLocal';
 
 const Shop = () => {
     const firs10 = fakeData.slice(0,10);
     const [products,setProducts] = useState(firs10);
-    const [cart,setCart] = useState([]);
+    const [cart,setCart] = useState(getLocalValue(fakeData));
     const handleAddProduct = (product)=> {
-        const newCart = [...cart,product];
-        setCart(newCart);
+        addToDB(product.key);
+        setCart(getLocalValue(fakeData));
     }
     return (
         
         <div>
-            
             <nav className="search">
                 <input className="search-input" type="text" placeholder="Search product" />
                 <FontAwesomeIcon icon={faShoppingCart} className="cart-icon"/>
@@ -28,7 +28,7 @@ const Shop = () => {
                 <div className="product-container">
                     <ul>
                         {
-                            products.map(pd => <Product product={pd} handleAddProduct = {handleAddProduct}></Product> )
+                            products.map(pd => <Product key={pd.key} product={pd} handleAddProduct = {handleAddProduct}></Product> )
                         }
                     </ul>
                 </div>
