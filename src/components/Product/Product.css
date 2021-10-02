@@ -11,17 +11,30 @@
     color: blue;
     font-size: 17px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     margin-top: 0;
 }
 .product-seller {
     color:seagreen;
     font-weight: 500;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 .product-price {
     font-weight: 700;
     font-size: 17px;
+    color: #b12704;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+.product-stock {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.quantity {
+    font-weight: 600;
+    font-size: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .add-button {
     background-color: goldenrod;

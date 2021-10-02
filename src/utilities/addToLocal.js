@@ -1,23 +1,19 @@
 const add = key => {
     const localObj = JSON.parse(get());
-    if(localObj) {
-        if(localObj[key]) {
-            localObj[key]=localObj[key] + 1;
-            localStorage.setItem('product',JSON.stringify(localObj));
-        }
-        else {
-            localObj[key]=1;
-            localStorage.setItem('product',JSON.stringify(localObj));
-        }
+    if(localObj[key]) {
+        localObj[key]=localObj[key] + 1;
+        localStorage.setItem('product',JSON.stringify(localObj));
     }
     else {
-        const newObj = {};
-        newObj[key]=1;
-        localStorage.setItem('product',JSON.stringify(newObj))
+        localObj[key]=1;
+        localStorage.setItem('product',JSON.stringify(localObj));
     }
 }
 const get = ()=> {
     return localStorage.getItem('product') || "{}";
+}
+const setToDB = db=> {
+    localStorage.setItem('product',JSON.stringify(db));
 }
 const addToDB = key=> {
     add(key);
@@ -37,4 +33,4 @@ const getLocalValue = products=> {
     })
     return finalObj;
 }
-export {addToDB,getLocalValue};
+export {addToDB,getLocalValue,get,setToDB};
