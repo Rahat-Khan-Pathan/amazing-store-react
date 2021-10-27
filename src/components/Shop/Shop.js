@@ -1,29 +1,57 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Shop.css";
-import fakeData from "../../fakeData";
 import "./Shop.css";
 import Product from "../Product/Product";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import Cart from "../Cart/Cart";
-import { addToDB, getLocalValue } from "../../utilities/addToLocal";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import useAuth from "../../hooks/useAuth";
 
 const Shop = () => {
-  const firs10 = fakeData.slice(0, 10);
-  const [searchProducts, setSearchProducts] = useState(firs10);
-  const [cart, setCart] = useState(getLocalValue(fakeData));
+  const [data, setData] = useState([]);
+  const [pages, setPages] = useState(0);
+  const [selectedPage, setSelectedPage] = useState(0);
+  const [cart, setCart] = useState([{}]);
+  const { user } = useAuth();
+  const [searchProducts, setSearchProducts] = useState([]);
+
+  useEffect(() => {
+    axios.get("https://frozen-sands-27089.herokuapp.com/products").then((res) => {
+      setData(res.data.products);
+      setPages(res.data.pages);
+      setSearchProducts(res.data.products.slice(0, 10));
+    });
+    axios
+      .get(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`)
+      .then((res) => setCart(res.data));
+  }, [user]);
+
+  // Handle Add Product
   const handleAddProduct = (product) => {
-    addToDB(product.key);
-    setCart(getLocalValue(fakeData));
+    axios
+      .post(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`, {
+        product: product,
+      })
+      .then((res) => setCart(res.data));
   };
+  // Handle Search
   const handleSearch = (event) => {
     const searchText = event.target.value;
-    const matched = fakeData.filter((dt) =>
+    const matched = data.filter((dt) =>
       dt.name.toLowerCase().includes(searchText.toLowerCase())
     );
     setSearchProducts(matched);
   };
+
+  // Handle Page
+  const handlePage = (number) => {
+    const newData = data.slice(10 * number, 10 * (number + 1));
+    setSearchProducts(newData);
+    setSelectedPage(number);
+  };
+
   return (
     <div>
       <nav className="search">
@@ -34,20 +62,44 @@ const Shop = () => {
           placeholder="Search product"
         />
         <FontAwesomeIcon icon={faShoppingCart} className="cart-icon" />
-        <p className="cart-number">{cart.length}</p>
+        {/* <p className="cart-number">{cart.length}</p> */}
       </nav>
+
       <div className="shop-container">
         <div className="product-container">
-          <ul>
-            {searchProducts.map((pd) => (
+          {searchProducts.length === 0 ? (
+            <button className="btn btn-primary spinner" type="button" disabled>
+              <span
+                className="spinner-grow spinner-grow-sm me-2"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              Loading...
+            </button>
+          ) : (
+            searchProducts.map((pd) => (
               <Product
                 key={pd.key}
                 product={pd}
-                handleAddProduct={handleAddProduct}
+                handleAddProduct={() => handleAddProduct(pd)}
               ></Product>
-            ))}
-          </ul>
+            ))
+          )}
+          <div className="pagination">
+            <div className="paginaiton-btn-container">
+              {[...Array(pages).keys()].map((number) => (
+                <button
+                  key={number}
+                  onClick={() => handlePage(number)}
+                  className={number === selectedPage ? "selected-page" : ""}
+                >
+                  {number + 1}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
+
         <div className="cart-container">
           <Cart cart={cart} check={1}>
             <Link to="/review">

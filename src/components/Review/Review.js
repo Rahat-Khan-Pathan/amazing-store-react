@@ -1,57 +1,56 @@
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import fakeData from "../../fakeData";
+import useAuth from "../../hooks/useAuth";
 import { get, getLocalValue, setToDB } from "../../utilities/addToLocal";
 import Cart from "../Cart/Cart";
 import ReviewProduct from "../ReviewProduct/ReviewProduct";
 
 const Review = () => {
-  const products = fakeData;
-  const [dbProduct, setDbProduct] = useState(JSON.parse(get()));
-  const [reviewProducts, setReviewProducts] = useState([]);
-  const [cart, setCart] = useState(getLocalValue(products));
+  const [data, setData] = useState([]);
+  const { user } = useAuth();
+  useEffect(() => {
+    axios
+      .get(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`)
+      .then((res) => setData(res.data));
+  }, [user]);
 
   const removeHandler = (key) => {
-    const newProduct = reviewProducts.filter((pd) => pd.key !== key);
-    setReviewProducts(newProduct);
-    const newDbProduct = dbProduct;
-    delete newDbProduct[key];
-    setToDB(newDbProduct);
-    setDbProduct(newDbProduct);
-    setCart(getLocalValue(products));
+    axios
+      .delete(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`, {
+        data: {
+          key: key,
+        },
+      })
+      .then((res) => setData(res.data));
   };
-  useEffect(() => {
-    const reviewProduct = [];
-    for (const key in dbProduct) {
-      const newProduct = products.find((p) => p.key === key);
-      newProduct["quantity"] = dbProduct[key];
-      reviewProduct.push(newProduct);
-    }
-    setReviewProducts(reviewProduct);
-  }, []);
-  const orderPlaced=()=> {
-      localStorage.removeItem('product');
-  }
+
   return (
     <div>
       <div className="shop-container">
         <div className="product-container">
           <ul>
-            {reviewProducts.map((pd) => (
-              <ReviewProduct
-                key={pd.key}
-                product={pd}
-                removeHandler={removeHandler}
-              ></ReviewProduct>
-            ))}
+            {data.length === 0 ? (
+              <button className="btn btn-primary spinner" type="button" disabled>
+                Nothing here. Please add some
+              </button>
+            ) : (
+              data.map((pd) => (
+                <ReviewProduct
+                  key={pd.key}
+                  product={pd}
+                  removeHandler={removeHandler}
+                ></ReviewProduct>
+              ))
+            )}
           </ul>
         </div>
         <div className="cart-container">
-          <Cart cart={cart} check={2}>
-            <Link to="/inventory">
-              <button onClick={orderPlaced} className="add-button">
+          <Cart cart={data} check={2}>
+            <Link to="/place-order">
+              <button className="add-button">
                 <FontAwesomeIcon icon={faShoppingCart} />
                 Place your order
               </button>

@@ -19,6 +19,7 @@ const addToDB = key=> {
     add(key);
 }
 const getLocalValue = products=> {
+    if(!products.length) return [];
     const dbObj = JSON.parse(get());
     const keys = Object.keys(dbObj);
     let finalObj = [];
