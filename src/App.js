@@ -20,9 +20,9 @@ function App() {
           <Route path="/shop">
             <Shop></Shop>
           </Route>
-          <Route path="/review">
+          <PrivateRoute path="/review">
             <Review></Review>
-          </Route>
+          </PrivateRoute>
           <Route path="/inventory">
             <Inventory></Inventory>
           </Route>

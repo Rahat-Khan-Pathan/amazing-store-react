@@ -8,6 +8,7 @@ import Cart from "../Cart/Cart";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
+import { useHistory } from "react-router-dom";
 
 const Shop = () => {
   const [data, setData] = useState([]);
@@ -16,13 +17,16 @@ const Shop = () => {
   const [cart, setCart] = useState([{}]);
   const { user } = useAuth();
   const [searchProducts, setSearchProducts] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
-    axios.get("https://frozen-sands-27089.herokuapp.com/products").then((res) => {
-      setData(res.data.products);
-      setPages(res.data.pages);
-      setSearchProducts(res.data.products.slice(0, 10));
-    });
+    axios
+      .get("https://frozen-sands-27089.herokuapp.com/products")
+      .then((res) => {
+        setData(res.data.products);
+        setPages(res.data.pages);
+        setSearchProducts(res.data.products.slice(0, 10));
+      });
     axios
       .get(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`)
       .then((res) => setCart(res.data));
@@ -30,11 +34,15 @@ const Shop = () => {
 
   // Handle Add Product
   const handleAddProduct = (product) => {
-    axios
-      .post(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`, {
-        product: product,
-      })
-      .then((res) => setCart(res.data));
+    if (!user.email) {
+      history.push("/login");
+    } else {
+      axios
+        .post(`https://frozen-sands-27089.herokuapp.com/users/${user.email}`, {
+          product: product,
+        })
+        .then((res) => setCart(res.data));
+    }
   };
   // Handle Search
   const handleSearch = (event) => {
